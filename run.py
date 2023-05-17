@@ -249,6 +249,9 @@ def main():
         if args.precision == 'bfloat16':
             with torch.cpu.amp.autocast(enabled=True, dtype=torch.bfloat16):
                 evaluate(args, device, model, dataloader)
+        elif args.precision == 'float16':
+            with torch.cpu.amp.autocast(enabled=True, dtype=torch.half):
+                evaluate(args, device, model, dataloader)
         else:
             evaluate(args, device, model, dataloader)
 
