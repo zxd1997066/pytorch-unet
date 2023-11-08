@@ -259,11 +259,11 @@ def main():
             with torch.cpu.amp.autocast(enabled=True, dtype=torch.bfloat16):
                 evaluate(args, device, model, dataloader)
         elif args.precision == 'float16':
-            if device == "cpu":
+            if args.device == "cpu":
               print('---- Enable CPU AMP float16')
               with torch.cpu.amp.autocast(enabled=True, dtype=torch.half):
                   evaluate(args, device, model, dataloader)
-            elif device == "cuda":
+            elif args.device == "cuda":
               print('---- Enable CUDA AMP float16')
               with torch.cuda.amp.autocast(enabled=True, dtype=torch.half):
                   evaluate(args, device, model, dataloader)
