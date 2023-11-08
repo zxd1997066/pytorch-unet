@@ -33,6 +33,8 @@ parser.add_argument("--compile", action='store_true', default=False,
                     help="enable torch.compile")
 parser.add_argument("--backend", type=str, default='inductor',
                     help="enable torch.compile backend")
+parser.add_argument("--device", type=str, default='cpu',
+                    help="cpu or cuda")
 
 args = parser.parse_args()
 
@@ -192,6 +194,7 @@ def main():
     dataloader = DataLoader(val_set, batch_size=args.batch_size, shuffle=False, num_workers=0)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print("----device:", device)
 
     model = pytorch_unet.UNet(args.n_classes).eval()
     if args.channels_last:
@@ -256,8 +259,14 @@ def main():
             with torch.cpu.amp.autocast(enabled=True, dtype=torch.bfloat16):
                 evaluate(args, device, model, dataloader)
         elif args.precision == 'float16':
-            with torch.cpu.amp.autocast(enabled=True, dtype=torch.half):
-                evaluate(args, device, model, dataloader)
+            if device == "cpu":
+              print('---- Enable CPU AMP float16')
+              with torch.cpu.amp.autocast(enabled=True, dtype=torch.half):
+                  evaluate(args, device, model, dataloader)
+            elif device == "cuda":
+              print('---- Enable CUDA AMP float16')
+              with torch.cuda.amp.autocast(enabled=True, dtype=torch.half):
+                  evaluate(args, device, model, dataloader)
         else:
             evaluate(args, device, model, dataloader)
 
