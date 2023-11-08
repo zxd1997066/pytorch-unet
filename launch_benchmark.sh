@@ -23,7 +23,7 @@ function main {
     do
         # cache weight
         python run.py --arch U-Net -b 1 -w 1 -i 2 \
-            --precision ${precision} --channels_last ${channels_last} --config_file ${workload_dir}/conf.yaml
+            --precision ${precision} --channels_last ${channels_last} --config_file ${workload_dir}/conf.yaml --device $device
         #
         for batch_size in ${batch_size_list[@]}
         do
