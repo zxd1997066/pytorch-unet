@@ -29,6 +29,10 @@ parser.add_argument('--profile', action='store_true', help='Trigger profile on c
 parser.add_argument('--arch', type=str, help='model name', default="U-Net")
 parser.add_argument('--config_file', type=str, default="./conf.yaml", help='config file for int8 tuning')
 parser.add_argument("--quantized_engine", type=str, default=None, help="torch backend quantized engine.")
+parser.add_argument("--compile", action='store_true', default=False,
+                    help="enable torch.compile")
+parser.add_argument("--backend", type=str, default='inductor',
+                    help="enable torch.compile backend")
 
 args = parser.parse_args()
 
@@ -97,6 +101,8 @@ class AverageMeter(object):
 def evaluate(args, device, model, dataloader):
     batch_time = AverageMeter()
     batch_time_list = []
+    if args.compile:
+        model = torch.compile(model, backend=args.backend, options={"freezing": True})
     if args.profile:
         with torch.profiler.profile(
             activities=[torch.profiler.ProfilerActivity.CPU],
