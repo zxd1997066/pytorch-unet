@@ -64,7 +64,7 @@ function generate_core {
             python run.py --arch U-Net -w ${num_warmup} -i ${num_iter} \
                 -b ${batch_size} --config_file ${workload_dir}/conf.yaml \
                 --precision ${precision} \
-                --channels_last ${channels_last} \
+                --channels_last ${channels_last} --device $device \
                 ${addtion_options} \
         > ${log_file} 2>&1 &  \n" |tee -a ${excute_cmd_file}
         if [ "${numa_nodes_use}" == "0" ];then
@@ -91,7 +91,7 @@ function generate_core_launcher {
             run.py --arch U-Net -w ${num_warmup} -i ${num_iter} \
                 -b ${batch_size} --config_file ${workload_dir}/conf.yaml \
                 --precision ${precision} \
-                --channels_last ${channels_last} \
+                --channels_last ${channels_last} --device $device \
                 ${addtion_options} \
         > /dev/null 2>&1 &  \n" |tee -a ${excute_cmd_file}
         break
