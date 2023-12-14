@@ -256,17 +256,12 @@ def main():
     # evaluate
     with torch.no_grad():
         if args.precision == 'bfloat16':
-            with torch.cpu.amp.autocast(enabled=True, dtype=torch.bfloat16):
+            with torch.autocast(device_type="cuda" if torch.cuda.is_available() else "cpu", enabled=True, dtype=torch.bfloat16):
                 evaluate(args, device, model, dataloader)
         elif args.precision == 'float16':
-            if args.device == "cpu":
-              print('---- Enable CPU AMP float16')
-              with torch.cpu.amp.autocast(enabled=True, dtype=torch.half):
-                  evaluate(args, device, model, dataloader)
-            elif args.device == "cuda":
-              print('---- Enable CUDA AMP float16')
-              with torch.cuda.amp.autocast(enabled=True, dtype=torch.half):
-                  evaluate(args, device, model, dataloader)
+            print('---- Enable AMP float16')
+            with torch.autocast(device_type="cuda" if torch.cuda.is_available() else "cpu", enabled=True, dtype=torch.half):
+                evaluate(args, device, model, dataloader)
         else:
             evaluate(args, device, model, dataloader)
 
