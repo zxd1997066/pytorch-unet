@@ -142,9 +142,8 @@ def evaluate(args, device, model, dataloader):
                 inputs_oob = inputs_oob.to(memory_format=torch.channels_last)
                 labels_oob = labels_oob.to(memory_format=torch.channels_last)
                 inputs, labels = inputs_oob, labels_oob
-            else:
-                inputs = inputs.to(device)
-                labels = labels.to(device)
+            inputs = inputs.to(device)
+            labels = labels.to(device)
 
             start = time.time()
             pred = model(inputs)
