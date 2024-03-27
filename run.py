@@ -6,6 +6,7 @@ import argparse
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 import torch
+import torch._inductor
 import pytorch_unet
 
 
@@ -106,6 +107,8 @@ def evaluate(args, device, model, dataloader):
     if args.compile:
         model = torch.compile(model, backend=args.backend, options={"freezing": True})
     if args.profile:
+        torch._inductor.config.profiler_mark_wrapper_call = True
+        torch._inductor.config.cpp.enable_kernel_profile = True
         with torch.profiler.profile(
             activities=[torch.profiler.ProfilerActivity.CPU],
             record_shapes=True,
